@@ -1,0 +1,528 @@
+Query 1:
+  Table: item
+    i_item_sk: min=8395, max=15115
+    i_rec_start_date: min=1997-10-27, max=2001-10-27
+    i_rec_end_date: min=2000-10-26, max=2001-10-26
+    i_current_price: min=0.23, max=9.53
+    i_wholesale_cost: min=0.09, max=5.35
+    i_brand_id: min=2002001, max=9012004
+    i_class_id: min=1, max=12
+    i_category_id: min=2, max=9
+    i_manufact_id: min=808, max=808
+    i_manager_id: min=8, max=95
+  Table: date_dim
+    d_date_sk: min=2415355, max=2488069
+    d_date: min=1900-12-01, max=2099-12-31
+    d_month_seq: min=11, max=2399
+    d_week_seq: min=48, max=10436
+    d_quarter_seq: min=5, max=801
+    d_year: min=1900, max=2099
+    d_dow: min=0, max=6
+    d_moy: min=12, max=12
+    d_dom: min=1, max=31
+    d_qoy: min=4, max=4
+    d_fy_year: min=1900, max=2099
+    d_fy_quarter_seq: min=5, max=801
+    d_fy_week_seq: min=48, max=10436
+    d_first_dom: min=2415355, max=2488039
+    d_last_dom: min=2415689, max=2488372
+    d_same_day_ly: min=2414990, max=2487704
+    d_same_day_lq: min=2415263, max=2487977
+  Join Type: Index Cond
+  Join Keys: ['store_sales.ss_item_sk=item.i_item_sk']
+  Join Type: Index Cond
+  Join Keys: ['date_dim.d_date_sk=store_sales.ss_sold_date_sk']
+
+Query 2:
+  Table: item
+    i_item_sk: min=1, max=17995
+    i_rec_start_date: min=1997-10-27, max=2001-10-27
+    i_rec_end_date: min=1999-10-27, max=2001-10-26
+    i_current_price: min=0.09, max=99.96
+    i_wholesale_cost: min=0.03, max=85.83
+    i_brand_id: min=1001001, max=10016017
+    i_class_id: min=1, max=16
+    i_category_id: min=5, max=10
+    i_manufact_id: min=1, max=1000
+    i_manager_id: min=1, max=100
+  Table: date_dim
+    d_date_sk: min=2450860, max=2450888
+    d_date: min=1998-02-15, max=1998-03-15
+    d_month_seq: min=1177, max=1178
+    d_week_seq: min=5120, max=5124
+    d_quarter_seq: min=393, max=394
+    d_year: min=1998, max=1998
+    d_dow: min=0, max=6
+    d_moy: min=2, max=3
+    d_dom: min=1, max=28
+    d_qoy: min=1, max=1
+    d_fy_year: min=1998, max=1998
+    d_fy_quarter_seq: min=393, max=394
+    d_fy_week_seq: min=5120, max=5124
+    d_first_dom: min=2450846, max=2450874
+    d_last_dom: min=2450876, max=2450932
+    d_same_day_ly: min=2450495, max=2450523
+    d_same_day_lq: min=2450768, max=2450796
+  Join Type: Hash Join
+  Join Keys: ['web_sales.ws_sold_date_sk=date_dim.d_date_sk']
+  Join Type: Index Cond
+  Join Keys: ['item.i_item_sk=web_sales.ws_item_sk']
+
+Query 3:
+  Table: customer_demographics
+    cd_demo_sk: min=9, max=1920764
+    cd_purchase_estimate: min=500, max=10000
+    cd_dep_count: min=0, max=6
+    cd_dep_employed_count: min=0, max=6
+    cd_dep_college_count: min=0, max=6
+  Table: household_demographics
+    hd_demo_sk: min=120, max=6479
+    hd_income_band_sk: min=1, max=20
+    hd_dep_count: min=1, max=3
+    hd_vehicle_count: min=-1, max=4
+  Table: date_dim
+    d_date_sk: min=2451911, max=2452275
+    d_date: min=2001-01-01, max=2001-12-31
+    d_month_seq: min=1212, max=1223
+    d_week_seq: min=5270, max=5322
+    d_quarter_seq: min=405, max=409
+    d_year: min=2001, max=2001
+    d_dow: min=0, max=6
+    d_moy: min=1, max=12
+    d_dom: min=1, max=31
+    d_qoy: min=1, max=4
+    d_fy_year: min=2001, max=2001
+    d_fy_quarter_seq: min=405, max=409
+    d_fy_week_seq: min=5270, max=5322
+    d_first_dom: min=2451911, max=2452245
+    d_last_dom: min=2451910, max=2452578
+    d_same_day_ly: min=2451545, max=2451910
+    d_same_day_lq: min=2451819, max=2452183
+  Join Type: Nested Loop
+  Join Keys: ['store_sales.ss_hdemo_sk=household_demographics.hd_demo_sk']
+  Join Type: Hash Join
+  Join Keys: ['store_sales.ss_sold_date_sk=date_dim.d_date_sk']
+  Join Type: Index Cond
+  Join Keys: ['customer_address.ca_address_sk=store_sales.ss_addr_sk']
+  Join Type: Index Cond
+  Join Keys: ['customer_demographics.cd_demo_sk=store_sales.ss_cdemo_sk']
+  Join Type: Index Cond
+  Join Keys: ['store.s_store_sk=store_sales.ss_store_sk']
+
+Query 4:
+  Table: date_dim
+    d_date_sk: min=2452367, max=2452457
+    d_date: min=2002-04-02, max=2002-07-01
+    d_month_seq: min=1227, max=1230
+    d_week_seq: min=5336, max=5348
+    d_quarter_seq: min=410, max=411
+    d_year: min=2002, max=2002
+    d_dow: min=0, max=6
+    d_moy: min=4, max=7
+    d_dom: min=1, max=31
+    d_qoy: min=2, max=2
+    d_fy_year: min=2002, max=2002
+    d_fy_quarter_seq: min=410, max=411
+    d_fy_week_seq: min=5336, max=5348
+    d_first_dom: min=2452366, max=2452457
+    d_last_dom: min=2452455, max=2452637
+    d_same_day_ly: min=2452002, max=2452092
+    d_same_day_lq: min=2452277, max=2452366
+  Join Type: Hash Join
+  Join Keys: ['catalog_sales.cs_sold_date_sk=date_dim.d_date_sk']
+  Join Type: Index Cond
+  Join Keys: ['customer.c_customer_sk=catalog_sales.cs_bill_customer_sk']
+  Join Type: Index Cond
+  Join Keys: ['customer_address.ca_address_sk=customer.c_current_addr_sk']
+
+Query 5:
+  Table: customer
+    c_customer_sk: min=1, max=100000
+    c_current_cdemo_sk: min=44, max=1920750
+    c_current_hdemo_sk: min=1, max=7200
+    c_current_addr_sk: min=1, max=50000
+    c_first_shipto_date_sk: min=2449028, max=2452678
+    c_first_sales_date_sk: min=2448998, max=2452648
+    c_birth_day: min=1, max=31
+    c_birth_month: min=2, max=12
+    c_birth_year: min=1924, max=1992
+    c_last_review_date_sk: min=2452283, max=2452648
+  Table: customer_address
+    ca_address_sk: min=5, max=49994
+    ca_gmt_offset: min=-6.00, max=-5.00
+  Table: customer_demographics
+    cd_demo_sk: min=21, max=1920759
+    cd_purchase_estimate: min=500, max=10000
+    cd_dep_count: min=0, max=6
+    cd_dep_employed_count: min=0, max=6
+    cd_dep_college_count: min=0, max=6
+  Table: date_dim
+    d_date_sk: min=2451545, max=2451910
+    d_date: min=2000-01-01, max=2000-12-31
+    d_month_seq: min=1200, max=1211
+    d_week_seq: min=5218, max=5270
+    d_quarter_seq: min=401, max=405
+    d_year: min=2000, max=2000
+    d_dow: min=0, max=6
+    d_moy: min=1, max=12
+    d_dom: min=1, max=31
+    d_qoy: min=1, max=4
+    d_fy_year: min=2000, max=2000
+    d_fy_quarter_seq: min=401, max=405
+    d_fy_week_seq: min=5218, max=5270
+    d_first_dom: min=2451545, max=2451880
+    d_last_dom: min=2451544, max=2452214
+    d_same_day_ly: min=2451180, max=2451544
+    d_same_day_lq: min=2451453, max=2451818
+  Join Type: Hash Join
+  Join Keys: ['catalog_sales.cs_sold_date_sk=date_dim.d_date_sk']
+  Join Type: Index Cond
+  Join Keys: ['customer_demographics.cd_demo_sk=catalog_sales.cs_bill_cdemo_sk']
+  Join Type: Index Cond
+  Join Keys: ['customer.c_customer_sk=catalog_sales.cs_bill_customer_sk']
+  Join Type: Index Cond
+  Join Keys: ['customer_address.ca_address_sk=customer.c_current_addr_sk']
+  Join Type: Index Cond
+  Join Keys: ['customer_demographics.cd_demo_sk=customer.c_current_cdemo_sk']
+  Join Type: Index Cond
+  Join Keys: ['item.i_item_sk=catalog_sales.cs_item_sk']
+
+Query 6:
+  Table: item
+    i_item_sk: min=1, max=17995
+    i_rec_start_date: min=1997-10-27, max=2001-10-27
+    i_rec_end_date: min=1999-10-27, max=2001-10-26
+    i_current_price: min=0.09, max=99.96
+    i_wholesale_cost: min=0.03, max=85.83
+    i_brand_id: min=1001001, max=10016017
+    i_class_id: min=1, max=16
+    i_category_id: min=5, max=10
+    i_manufact_id: min=1, max=1000
+    i_manager_id: min=1, max=100
+  Table: date_dim
+    d_date_sk: min=2450860, max=2450888
+    d_date: min=1998-02-15, max=1998-03-15
+    d_month_seq: min=1177, max=1178
+    d_week_seq: min=5120, max=5124
+    d_quarter_seq: min=393, max=394
+    d_year: min=1998, max=1998
+    d_dow: min=0, max=6
+    d_moy: min=2, max=3
+    d_dom: min=1, max=28
+    d_qoy: min=1, max=1
+    d_fy_year: min=1998, max=1998
+    d_fy_quarter_seq: min=393, max=394
+    d_fy_week_seq: min=5120, max=5124
+    d_first_dom: min=2450846, max=2450874
+    d_last_dom: min=2450876, max=2450932
+    d_same_day_ly: min=2450495, max=2450523
+    d_same_day_lq: min=2450768, max=2450796
+  Join Type: Hash Join
+  Join Keys: ['catalog_sales.cs_sold_date_sk=date_dim.d_date_sk']
+  Join Type: Index Cond
+  Join Keys: ['item.i_item_sk=catalog_sales.cs_item_sk']
+
+Query 7:
+  Table: date_dim
+    d_date_sk: min=2450815, max=2451179
+    d_date: min=1998-01-01, max=1998-12-31
+    d_month_seq: min=1176, max=1187
+    d_week_seq: min=5114, max=5166
+    d_quarter_seq: min=393, max=397
+    d_year: min=1998, max=1998
+    d_dow: min=0, max=6
+    d_moy: min=1, max=12
+    d_dom: min=1, max=31
+    d_qoy: min=1, max=4
+    d_fy_year: min=1998, max=1998
+    d_fy_quarter_seq: min=393, max=397
+    d_fy_week_seq: min=5114, max=5166
+    d_first_dom: min=2450815, max=2451149
+    d_last_dom: min=2450814, max=2451482
+    d_same_day_ly: min=2450450, max=2450814
+    d_same_day_lq: min=2450723, max=2451087
+  Join Type: Hash Join
+  Join Keys: ['inventory.inv_item_sk=item.i_item_sk']
+  Join Type: Hash Join
+  Join Keys: ['inventory.inv_date_sk=date_dim.d_date_sk']
+
+Query 8:
+  Table: date_dim
+    d_date_sk: min=2452366, max=2452395
+    d_date: min=2002-04-01, max=2002-04-30
+    d_month_seq: min=1227, max=1227
+    d_week_seq: min=5335, max=5340
+    d_quarter_seq: min=410, max=410
+    d_year: min=2002, max=2002
+    d_dow: min=0, max=6
+    d_moy: min=4, max=4
+    d_dom: min=1, max=30
+    d_qoy: min=1, max=2
+    d_fy_year: min=2002, max=2002
+    d_fy_quarter_seq: min=410, max=410
+    d_fy_week_seq: min=5335, max=5340
+    d_first_dom: min=2452366, max=2452366
+    d_last_dom: min=2452455, max=2452455
+    d_same_day_ly: min=2452001, max=2452030
+    d_same_day_lq: min=2452276, max=2452305
+  Join Type: Nested Loop
+  Join Keys: ['store_sales.ss_store_sk=store.s_store_sk']
+  Join Type: Index Cond
+  Join Keys: ['store_sales.ss_item_sk=store_returns.sr_item_sk']
+  Join Type: Index Cond
+  Join Keys: ['store_sales.ss_ticket_number=store_returns.sr_ticket_number']
+  Join Type: Index Cond
+  Join Keys: ['catalog_sales.cs_item_sk=store_sales.ss_item_sk']
+  Join Type: Index Cond
+  Join Keys: ['date_dim.d_date_sk=store_sales.ss_sold_date_sk']
+  Join Type: Index Cond
+  Join Keys: ['date_dim.d_date_sk=catalog_sales.cs_sold_date_sk']
+  Join Type: Index Cond
+  Join Keys: ['item.i_item_sk=store_sales.ss_item_sk']
+
+Query 9:
+  Table: store
+    s_store_sk: min=1, max=12
+    s_rec_start_date: min=1997-03-13, max=2001-03-13
+    s_rec_end_date: min=1999-03-13, max=2001-03-12
+    s_closed_date_sk: min=2450910, max=2451189
+    s_number_employees: min=218, max=294
+    s_floor_space: min=5219562, max=9341467
+    s_market_id: min=2, max=10
+    s_division_id: min=1, max=1
+    s_company_id: min=1, max=1
+    s_gmt_offset: min=-5.00, max=-5.00
+    s_tax_precentage: min=0.01, max=0.11
+  Table: household_demographics
+    hd_demo_sk: min=360, max=6479
+    hd_income_band_sk: min=1, max=20
+    hd_dep_count: min=0, max=9
+    hd_vehicle_count: min=-1, max=4
+  Table: date_dim
+    d_date_sk: min=2451183, max=2452275
+    d_date: min=1999-01-04, max=2001-12-31
+    d_month_seq: min=1188, max=1223
+    d_week_seq: min=5166, max=5322
+    d_quarter_seq: min=397, max=409
+    d_year: min=1999, max=2001
+    d_dow: min=1, max=1
+    d_moy: min=1, max=12
+    d_dom: min=1, max=31
+    d_qoy: min=1, max=4
+    d_fy_year: min=1999, max=2001
+    d_fy_quarter_seq: min=397, max=409
+    d_fy_week_seq: min=5166, max=5322
+    d_first_dom: min=2451180, max=2452245
+    d_last_dom: min=2451179, max=2452578
+    d_same_day_ly: min=2450818, max=2451910
+    d_same_day_lq: min=2451091, max=2452183
+  Join Type: Nested Loop
+  Join Keys: ['store_sales.ss_store_sk=store.s_store_sk']
+  Join Type: Hash Join
+  Join Keys: ['store_sales.ss_sold_date_sk=date_dim.d_date_sk']
+  Join Type: Index Cond
+  Join Keys: ['household_demographics.hd_demo_sk=store_sales.ss_hdemo_sk']
+  Join Type: Index Cond
+  Join Keys: ['customer.c_customer_sk=store_sales.ss_customer_sk']
+
+Query 10:
+  Table: date_dim
+    d_date_sk: min=2450815, max=2451179
+    d_date: min=1998-01-01, max=1998-12-31
+    d_month_seq: min=1176, max=1187
+    d_week_seq: min=5114, max=5166
+    d_quarter_seq: min=393, max=397
+    d_year: min=1998, max=1998
+    d_dow: min=0, max=6
+    d_moy: min=1, max=12
+    d_dom: min=1, max=31
+    d_qoy: min=1, max=4
+    d_fy_year: min=1998, max=1998
+    d_fy_quarter_seq: min=393, max=397
+    d_fy_week_seq: min=5114, max=5166
+    d_first_dom: min=2450815, max=2451149
+    d_last_dom: min=2450814, max=2451482
+    d_same_day_ly: min=2450450, max=2450814
+    d_same_day_lq: min=2450723, max=2451087
+  Join Type: Hash Join
+  Join Keys: ['store_sales.ss_store_sk=store.s_store_sk']
+  Join Type: Hash Join
+  Join Keys: ['store_sales.ss_sold_date_sk=date_dim.d_date_sk']
+  Join Type: Index Cond
+  Join Keys: ['item.i_item_sk=store_sales.ss_item_sk']
+
+Query 11:
+  Table: date_dim
+    d_date_sk: min=2450815, max=2451179
+    d_date: min=1998-01-01, max=1998-12-31
+    d_month_seq: min=1176, max=1187
+    d_week_seq: min=5114, max=5166
+    d_quarter_seq: min=393, max=397
+    d_year: min=1998, max=1998
+    d_dow: min=0, max=6
+    d_moy: min=1, max=12
+    d_dom: min=1, max=31
+    d_qoy: min=1, max=4
+    d_fy_year: min=1998, max=1998
+    d_fy_quarter_seq: min=393, max=397
+    d_fy_week_seq: min=5114, max=5166
+    d_first_dom: min=2450815, max=2451149
+    d_last_dom: min=2450814, max=2451482
+    d_same_day_ly: min=2450450, max=2450814
+    d_same_day_lq: min=2450723, max=2451087
+  Join Type: Hash Join
+  Join Keys: ['store_sales.ss_sold_date_sk=date_dim.d_date_sk']
+  Join Type: Index Cond
+  Join Keys: ['customer.c_customer_sk=store_sales.ss_customer_sk']
+  Join Type: Index Cond
+  Join Keys: ['customer.c_customer_sk=catalog_sales.cs_bill_customer_sk']
+  Join Type: Index Cond
+  Join Keys: ['customer.c_customer_sk=web_sales.ws_bill_customer_sk']
+
+Query 12:
+  Table: customer_address
+    ca_address_sk: min=1, max=49997
+    ca_gmt_offset: min=-7.00, max=-7.00
+  Table: customer_demographics
+    cd_demo_sk: min=57, max=1920792
+    cd_purchase_estimate: min=500, max=10000
+    cd_dep_count: min=0, max=6
+    cd_dep_employed_count: min=0, max=6
+    cd_dep_college_count: min=0, max=6
+  Table: household_demographics
+    hd_demo_sk: min=80, max=7179
+    hd_income_band_sk: min=1, max=20
+    hd_dep_count: min=0, max=9
+    hd_vehicle_count: min=-1, max=4
+  Table: date_dim
+    d_date_sk: min=2452245, max=2452275
+    d_date: min=2001-12-01, max=2001-12-31
+    d_month_seq: min=1223, max=1223
+    d_week_seq: min=5318, max=5322
+    d_quarter_seq: min=409, max=409
+    d_year: min=2001, max=2001
+    d_dow: min=0, max=6
+    d_moy: min=12, max=12
+    d_dom: min=1, max=31
+    d_qoy: min=4, max=4
+    d_fy_year: min=2001, max=2001
+    d_fy_quarter_seq: min=409, max=409
+    d_fy_week_seq: min=5318, max=5322
+    d_first_dom: min=2452245, max=2452245
+    d_last_dom: min=2452578, max=2452578
+    d_same_day_ly: min=2451880, max=2451910
+    d_same_day_lq: min=2452153, max=2452183
+  Join Type: Hash Join
+  Join Keys: ['catalog_returns.cr_returned_date_sk=date_dim.d_date_sk']
+  Join Type: Index Cond
+  Join Keys: ['customer.c_customer_sk=catalog_returns.cr_returning_customer_sk']
+  Join Type: Index Cond
+  Join Keys: ['household_demographics.hd_demo_sk=customer.c_current_hdemo_sk']
+  Join Type: Index Cond
+  Join Keys: ['customer_address.ca_address_sk=customer.c_current_addr_sk']
+  Join Type: Index Cond
+  Join Keys: ['call_center.cc_call_center_sk=catalog_returns.cr_call_center_sk']
+  Join Type: Index Cond
+  Join Keys: ['customer_demographics.cd_demo_sk=customer.c_current_cdemo_sk']
+
+Query 13:
+  Table: item
+    i_item_sk: min=797, max=17172
+    i_rec_start_date: min=1997-10-27, max=2001-10-27
+    i_rec_end_date: min=1999-10-27, max=2001-10-26
+    i_current_price: min=0.45, max=72.61
+    i_wholesale_cost: min=0.19, max=55.53
+    i_brand_id: min=1001001, max=10014016
+    i_class_id: min=1, max=15
+    i_category_id: min=1, max=10
+    i_manufact_id: min=74, max=74
+    i_manager_id: min=2, max=97
+  Table: date_dim
+    d_date_sk: min=2451551, max=2451642
+    d_date: min=2000-01-07, max=2000-04-07
+    d_month_seq: min=1200, max=1203
+    d_week_seq: min=5219, max=5232
+    d_quarter_seq: min=401, max=402
+    d_year: min=2000, max=2000
+    d_dow: min=0, max=6
+    d_moy: min=1, max=4
+    d_dom: min=1, max=31
+    d_qoy: min=1, max=2
+    d_fy_year: min=2000, max=2000
+    d_fy_quarter_seq: min=401, max=402
+    d_fy_week_seq: min=5219, max=5232
+    d_first_dom: min=2451545, max=2451636
+    d_last_dom: min=2451544, max=2451726
+    d_same_day_ly: min=2451186, max=2451276
+    d_same_day_lq: min=2451459, max=2451551
+  Join Type: Hash Join
+  Join Keys: ['web_sales.ws_item_sk=item.i_item_sk']
+  Join Type: Hash Join
+  Join Keys: ['web_sales.ws_sold_date_sk=date_dim.d_date_sk']
+  Join Type: Index Cond
+  Join Keys: ['web_sales.ws_item_sk=item.i_item_sk']
+
+Query 14:
+  Table: customer_address
+    ca_address_sk: min=25, max=49963
+    ca_gmt_offset: min=-5.00, max=-5.00
+  Table: web_site
+    web_site_sk: min=20, max=30
+    web_rec_start_date: min=1997-08-16, max=2001-08-16
+    web_rec_end_date: min=1999-08-16, max=2001-08-15
+    web_open_date_sk: min=2450577, max=2450645
+    web_close_date_sk: min=2448752, max=2448820
+    web_mkt_id: min=4, max=5
+    web_company_id: min=1, max=4
+    web_gmt_offset: min=-5.00, max=-5.00
+    web_tax_percentage: min=0.04, max=0.12
+  Table: date_dim
+    d_date_sk: min=2451605, max=2451666
+    d_date: min=2000-03-01, max=2000-05-01
+    d_month_seq: min=1202, max=1204
+    d_week_seq: min=5227, max=5235
+    d_quarter_seq: min=402, max=402
+    d_year: min=2000, max=2000
+    d_dow: min=0, max=6
+    d_moy: min=3, max=5
+    d_dom: min=1, max=31
+    d_qoy: min=1, max=2
+    d_fy_year: min=2000, max=2000
+    d_fy_quarter_seq: min=402, max=402
+    d_fy_week_seq: min=5227, max=5235
+    d_first_dom: min=2451605, max=2451666
+    d_last_dom: min=2451664, max=2451786
+    d_same_day_ly: min=2451239, max=2451300
+    d_same_day_lq: min=2451513, max=2451575
+
+Query 15:
+  Table: store
+    s_store_sk: min=4, max=4
+    s_rec_start_date: min=1997-03-13, max=1997-03-13
+    s_rec_end_date: min=1999-03-13, max=1999-03-13
+    s_closed_date_sk: min=2451044, max=2451044
+    s_number_employees: min=218, max=218
+    s_floor_space: min=9341467, max=9341467
+    s_market_id: min=4, max=4
+    s_division_id: min=1, max=1
+    s_company_id: min=1, max=1
+    s_gmt_offset: min=-5.00, max=-5.00
+    s_tax_precentage: min=0.03, max=0.03
+  Table: time_dim
+    t_time_sk: min=55800, max=57599
+    t_time: min=55800, max=57599
+    t_hour: min=15, max=15
+    t_minute: min=30, max=59
+    t_second: min=0, max=59
+  Table: household_demographics
+    hd_demo_sk: min=840, max=6959
+    hd_income_band_sk: min=1, max=20
+    hd_dep_count: min=7, max=7
+    hd_vehicle_count: min=-1, max=4
+  Join Type: Hash Join
+  Join Keys: ['store_sales.ss_store_sk=store.s_store_sk']
+  Join Type: Hash Join
+  Join Keys: ['store_sales.ss_hdemo_sk=household_demographics.hd_demo_sk']
+  Join Type: Index Cond
+  Join Keys: ['time_dim.t_time_sk=store_sales.ss_sold_time_sk']
+

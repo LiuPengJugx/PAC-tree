@@ -1,0 +1,333 @@
+Query 1:
+  Table: lineitem
+    l_shipdate: min=1992-01-02, max=1998-09-24
+    l_receiptdate: min=1992-01-04, max=1998-10-24
+
+Query 2:
+  Table: region
+    r_regionkey: min=2, max=2
+  Table: part
+    p_partkey: min=354, max=199875
+    p_size: min=38, max=38
+    p_retailprice: min=911.00, max=2086.99
+  Table: partsupp
+    ps_partkey: min=354, max=199875
+  Table: nation
+    n_regionkey: min=2, max=2
+  Table: supplier
+  Join Type: Index Cond
+  Join Keys: ['nation.n_nationkey=supplier.s_nationkey']
+  Join Type: Index Cond
+  Join Keys: ['supplier.s_nationkey=nation.n_nationkey']
+  Join Type: Hash Join
+  Join Keys: ['nation.n_regionkey=region.r_regionkey']
+  Join Type: Index Cond
+  Join Keys: ['partsupp.ps_partkey=part.p_partkey']
+  Join Type: Nested Loop
+  Join Keys: ['nation.n_regionkey=region.r_regionkey']
+  Join Type: Hash Join
+  Join Keys: ['part.p_partkey=partsupp.ps_partkey']
+  Join Type: Index Cond
+  Join Keys: ['partsupp.ps_suppkey=supplier.s_suppkey']
+
+Query 3:
+  Table: customer
+    c_custkey: min=9, max=149983
+    c_acctbal: min=-999.99, max=9999.74
+  Table: lineitem
+    l_orderkey: min=3, max=5999975
+    l_extendedprice: min=901.00, max=104749.50
+    l_shipdate: min=1995-03-18, max=1998-12-01
+    l_commitdate: min=1994-12-17, max=1998-10-31
+    l_receiptdate: min=1995-03-19, max=1998-12-31
+  Table: orders
+    o_orderkey: min=3, max=5999975
+    o_custkey: min=9, max=149983
+    o_totalprice: min=866.90, max=555285.16
+    o_orderdate: min=1992-01-01, max=1994-03-16
+  Join Type: Index Cond
+  Join Keys: ['lineitem.l_orderkey=orders.o_orderkey']
+  Join Type: Hash Join
+  Join Keys: ['orders.o_custkey=customer.c_custkey']
+
+Query 4:
+  Table: lineitem
+    l_orderkey: min=4, max=5999970
+    l_shipdate: min=1992-01-06, max=1998-12-01
+    l_receiptdate: min=1992-02-02, max=1998-12-31
+  Table: orders
+    o_orderkey: min=4, max=5999970
+    o_custkey: min=2, max=149999
+    o_totalprice: min=885.75, max=502906.33
+    o_orderdate: min=1995-03-01, max=1995-12-31
+  Join Type: Index Cond
+  Join Keys: ['lineitem.l_orderkey=orders.o_orderkey']
+
+Query 5:
+  Table: region
+    r_regionkey: min=1, max=1
+  Table: orders
+    o_orderkey: min=3, max=5999975
+    o_custkey: min=4, max=149999
+    o_totalprice: min=875.52, max=510061.60
+    o_orderdate: min=1993-01-01, max=1993-12-31
+  Table: nation
+    n_regionkey: min=1, max=1
+  Table: customer
+  Table: lineitem
+    l_orderkey: min=3, max=5999975
+  Table: supplier
+  Join Type: Index Cond
+  Join Keys: ['orders.o_custkey=customer.c_custkey']
+  Join Type: Index Cond
+  Join Keys: ['customer.c_nationkey=nation.n_nationkey']
+  Join Type: Nested Loop
+  Join Keys: ['nation.n_regionkey=region.r_regionkey']
+  Join Type: Hash Join
+  Join Keys: ['customer.c_nationkey=supplier.s_nationkey']
+  Join Type: Index Cond
+  Join Keys: ['lineitem.l_orderkey=orders.o_orderkey']
+  Join Type: Hash Join
+  Join Keys: ['lineitem.l_suppkey=supplier.s_suppkey']
+
+Query 7:
+  Table: nation
+    n_nationkey: min=16, max=23
+    n_regionkey: min=0, max=3
+  Table: lineitem
+    l_extendedprice: min=904.00, max=104749.50
+    l_shipdate: min=1995-01-01, max=1996-12-31
+    l_commitdate: min=1994-10-02, max=1997-03-28
+    l_receiptdate: min=1995-01-02, max=1997-01-30
+  Table: supplier
+  Table: customer
+    c_nationkey: min=16, max=23
+  Table: orders
+    o_custkey: min=4, max=149999
+  Join Type: Index Cond
+  Join Keys: ['lineitem.l_orderkey=orders.o_orderkey']
+  Join Type: Hash Join
+  Join Keys: ['supplier.s_nationkey=nation.n_nationkey']
+  Join Type: Index Cond
+  Join Keys: ['orders.o_custkey=customer.c_custkey']
+  Join Type: Hash Join
+  Join Keys: ['customer.c_nationkey=nation.n_nationkey']
+  Join Type: Hash Join
+  Join Keys: ['lineitem.l_suppkey=supplier.s_suppkey']
+
+Query 8:
+  Table: orders
+    o_totalprice: min=885.75, max=515531.82
+    o_orderdate: min=1995-01-01, max=1996-12-31
+  Table: part
+    p_partkey: min=113, max=199995
+    p_retailprice: min=904.00, max=2094.99
+  Table: customer
+    c_custkey: min=1, max=149999
+  Table: lineitem
+    l_partkey: min=113, max=199995
+  Table: nation
+  Table: supplier
+    s_nationkey: min=0, max=24
+  Table: region
+  Join Type: Hash Join
+  Join Keys: ['orders.o_custkey=customer.c_custkey']
+  Join Type: Nested Loop
+  Join Keys: ['nation.n_regionkey=region.r_regionkey']
+  Join Type: Hash Join
+  Join Keys: ['lineitem.l_suppkey=supplier.s_suppkey']
+  Join Type: Index Cond
+  Join Keys: ['lineitem.l_partkey=part.p_partkey']
+  Join Type: Index Cond
+  Join Keys: ['customer.c_nationkey=nation.n_nationkey']
+  Join Type: Index Cond
+  Join Keys: ['orders.o_orderkey=lineitem.l_orderkey']
+  Join Type: Hash Join
+  Join Keys: ['supplier.s_nationkey=nation.n_nationkey']
+
+Query 9:
+  Table: part
+    p_partkey: min=2, max=199983
+    p_retailprice: min=902.00, max=2096.99
+  Table: partsupp
+    ps_partkey: min=2, max=199983
+  Table: lineitem
+    l_partkey: min=2, max=199983
+  Table: orders
+  Table: supplier
+  Table: nation
+    n_nationkey: min=16, max=23
+  Join Type: Hash Join
+  Join Keys: ['supplier.s_nationkey=nation.n_nationkey']
+  Join Type: Index Cond
+  Join Keys: ['lineitem.l_partkey=partsupp.ps_partkey']
+  Join Type: Hash Join
+  Join Keys: ['lineitem.l_orderkey=orders.o_orderkey']
+  Join Type: Hash Join
+  Join Keys: ['partsupp.ps_partkey=part.p_partkey']
+  Join Type: Hash Join
+  Join Keys: ['partsupp.ps_suppkey=supplier.s_suppkey']
+  Join Type: Nested Loop
+  Join Keys: ['supplier.s_suppkey=lineitem.l_suppkey']
+
+Query 10:
+  Table: orders
+    o_orderkey: min=66, max=5999942
+    o_custkey: min=2, max=149999
+    o_totalprice: min=875.52, max=544089.09
+    o_orderdate: min=1993-11-01, max=1994-06-30
+  Table: lineitem
+    l_orderkey: min=66, max=5999942
+    l_extendedprice: min=904.00, max=104899.50
+    l_shipdate: min=1992-01-02, max=1995-06-16
+    l_commitdate: min=1992-01-31, max=1995-09-05
+    l_receiptdate: min=1992-01-04, max=1995-06-17
+  Table: customer
+    c_custkey: min=2, max=149999
+  Table: nation
+  Join Type: Hash Join
+  Join Keys: ['customer.c_nationkey=nation.n_nationkey']
+  Join Type: Hash Join
+  Join Keys: ['orders.o_custkey=customer.c_custkey']
+  Join Type: Hash Join
+  Join Keys: ['lineitem.l_orderkey=orders.o_orderkey']
+
+Query 11:
+  Table: nation
+    n_nationkey: min=12, max=12
+    n_regionkey: min=2, max=2
+  Table: supplier
+    s_nationkey: min=12, max=12
+  Table: partsupp
+  Join Type: Hash Join
+  Join Keys: ['supplier.s_nationkey=nation.n_nationkey']
+  Join Type: Index Cond
+  Join Keys: ['partsupp.ps_suppkey=supplier.s_suppkey']
+  Join Type: Hash Join
+  Join Keys: ['supplier.s_nationkey=nation.n_nationkey']
+
+Query 12:
+  Table: lineitem
+    l_orderkey: min=388, max=5999751
+    l_partkey: min=5, max=200000
+    l_extendedprice: min=924.00, max=104949.50
+    l_shipdate: min=1992-12-02, max=1993-12-29
+    l_commitdate: min=1992-12-05, max=1993-12-30
+    l_receiptdate: min=1993-01-01, max=1993-12-31
+  Table: orders
+    o_orderkey: min=388, max=5999751
+  Join Type: Hash Join
+  Join Keys: ['orders.o_orderkey=lineitem.l_orderkey']
+
+Query 13:
+  Table: orders
+  Table: customer
+    c_custkey: min=1, max=149999
+  Join Type: Hash Join
+  Join Keys: ['orders.o_custkey=customer.c_custkey']
+
+Query 14:
+  Table: lineitem
+    l_orderkey: min=3, max=5999975
+    l_extendedprice: min=904.00, max=104949.50
+    l_shipdate: min=1993-04-01, max=1994-03-31
+    l_commitdate: min=1993-01-01, max=1994-06-27
+    l_receiptdate: min=1993-04-02, max=1994-04-30
+  Table: part
+  Join Type: Hash Join
+  Join Keys: ['lineitem.l_partkey=part.p_partkey']
+
+Query 15:
+  Table: supplier
+    s_suppkey: min=358, max=9504
+    s_nationkey: min=1, max=21
+    s_acctbal: min=1887.82, max=6974.74
+  Table: part
+    p_partkey: min=6, max=200000
+    p_size: min=4, max=47
+    p_retailprice: min=905.00, max=2095.99
+  Table: partsupp
+    ps_partkey: min=6, max=200000
+  Join Type: Hash Join
+  Join Keys: ['partsupp.ps_partkey=part.p_partkey']
+
+Query 16:
+  Table: part
+    p_partkey: min=496, max=199779
+    p_retailprice: min=902.00, max=2070.98
+  Table: lineitem
+    l_partkey: min=496, max=199779
+  Join Type: Hash Join
+  Join Keys: ['lineitem.l_partkey=part.p_partkey']
+
+Query 17:
+  Join Type: Hash Join
+  Join Keys: ['orders.o_orderkey=lineitem.l_orderkey']
+  Join Type: Merge Join
+  Join Keys: ['customer.c_custkey=orders.o_custkey']
+
+Query 18:
+  Table: part
+    p_partkey: min=386, max=199721
+    p_size: min=1, max=15
+    p_retailprice: min=935.01, max=2050.98
+  Table: lineitem
+    l_partkey: min=386, max=199721
+  Join Type: Index Cond
+  Join Keys: ['lineitem.l_partkey=part.p_partkey']
+
+Query 19:
+  Table: nation
+    n_nationkey: min=14, max=14
+    n_regionkey: min=0, max=0
+  Table: part
+    p_partkey: min=20, max=199957
+    p_retailprice: min=909.00, max=2079.98
+  Table: lineitem
+    l_partkey: min=20, max=199957
+    l_extendedprice: min=904.00, max=104749.50
+    l_shipdate: min=1996-01-01, max=1996-12-31
+    l_commitdate: min=1995-10-03, max=1997-03-28
+    l_receiptdate: min=1996-01-02, max=1997-01-30
+  Table: supplier
+    s_nationkey: min=14, max=14
+  Table: partsupp
+    ps_partkey: min=20, max=199957
+  Join Type: Index Cond
+  Join Keys: ['lineitem.l_partkey=partsupp.ps_partkey']
+  Join Type: Hash Join
+  Join Keys: ['supplier.s_suppkey=partsupp.ps_suppkey']
+  Join Type: Index Cond
+  Join Keys: ['partsupp.ps_partkey=part.p_partkey']
+  Join Type: Hash Join
+  Join Keys: ['supplier.s_nationkey=nation.n_nationkey']
+
+Query 20:
+  Table: nation
+    n_nationkey: min=20, max=20
+    n_regionkey: min=4, max=4
+  Table: orders
+    o_orderkey: min=3, max=5999975
+    o_totalprice: min=866.90, max=555285.16
+    o_orderdate: min=1992-01-01, max=1995-06-15
+  Table: supplier
+    s_nationkey: min=20, max=20
+  Table: lineitem
+    l_orderkey: min=3, max=5999975
+  Join Type: Hash Join
+  Join Keys: ['lineitem.l_suppkey=supplier.s_suppkey']
+  Join Type: Index Cond
+  Join Keys: ['orders.o_orderkey=lineitem.l_orderkey']
+  Join Type: Hash Join
+  Join Keys: ['supplier.s_nationkey=nation.n_nationkey']
+
+Query 21:
+  Table: customer
+    c_custkey: min=2, max=149997
+    c_nationkey: min=0, max=23
+    c_acctbal: min=0.12, max=9999.59
+  Table: orders
+    o_custkey: min=2, max=149997
+  Join Type: Index Cond
+  Join Keys: ['orders.o_custkey=customer.c_custkey']
+

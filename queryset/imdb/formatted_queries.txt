@@ -1,0 +1,287 @@
+Query 1:
+  Table: info_type
+    id: min=112, max=112
+  Table: company_type
+    id: min=2, max=2
+  Table: movie_companies
+    id: min=148570, max=2609120
+    movie_id: min=1186, max=2525626
+    company_id: min=2, max=234901
+    company_type_id: min=1, max=2
+  Join Type: Nested Loop
+  Join Keys: ['movie_companies.movie_id=title.id']
+  Join Type: Nested Loop
+  Join Keys: ['movie_companies.company_type_id=company_type.id']
+  Join Type: Hash Join
+  Join Keys: ['movie_info_idx.info_type_id=info_type.id']
+  Join Type: Index Cond
+  Join Keys: ['movie_companies.movie_id=movie_info_idx.movie_id']
+  Join Type: Index Cond
+  Join Keys: ['title.id=movie_info_idx.movie_id']
+
+Query 2:
+  Table: company_name
+    id: min=15003, max=54987
+  Table: keyword
+    id: min=117, max=117
+  Join Type: Nested Loop
+  Join Keys: ['movie_companies.movie_id=title.id']
+  Join Type: Index Cond
+  Join Keys: ['movie_keyword.keyword_id=keyword.id']
+  Join Type: Index Cond
+  Join Keys: ['movie_companies.movie_id=movie_keyword.movie_id']
+  Join Type: Index Cond
+  Join Keys: ['company_name.id=movie_companies.company_id']
+  Join Type: Index Cond
+  Join Keys: ['title.id=movie_keyword.movie_id']
+
+Query 3:
+  Table: keyword
+    id: min=398, max=128826
+  Table: movie_info
+    id: min=1725199, max=8980316
+    movie_id: min=447, max=2525727
+    info_type_id: min=4, max=77
+  Table: title
+    id: min=50, max=2528185
+    kind_id: min=1, max=7
+    production_year: min=2010, max=2010
+    episode_of_id: min=50, max=1632684
+    season_nr: min=1, max=2010
+    episode_nr: min=1, max=91821
+  Join Type: Nested Loop
+  Join Keys: ['title.id=movie_info.movie_id']
+  Join Type: Index Cond
+  Join Keys: ['movie_keyword.keyword_id=keyword.id']
+  Join Type: Index Cond
+  Join Keys: ['title.id=movie_keyword.movie_id']
+  Join Type: Index Cond
+  Join Keys: ['movie_info.movie_id=movie_keyword.movie_id']
+
+Query 4:
+  Table: title
+    id: min=11, max=2528298
+    kind_id: min=1, max=7
+    production_year: min=2011, max=2013
+    episode_of_id: min=11, max=1632831
+    season_nr: min=1, max=2013
+    episode_nr: min=1, max=91334
+  Table: keyword
+    id: min=131852, max=131852
+  Join Type: Nested Loop
+  Join Keys: ['movie_link.link_type_id=link_type.id']
+  Join Type: Index Cond
+  Join Keys: ['movie_keyword.keyword_id=keyword.id']
+  Join Type: Index Cond
+  Join Keys: ['title.id=movie_keyword.movie_id']
+  Join Type: Index Cond
+  Join Keys: ['movie_link.movie_id=title.id']
+  Join Type: Index Cond
+  Join Keys: ['title.id=movie_link.linked_movie_id']
+
+Query 5:
+  Table: company_name
+    id: min=74, max=234945
+  Table: title
+    id: min=1000000, max=1100000
+    kind_id: min=2, max=7
+    production_year: min=1936, max=2014
+    episode_of_id: min=999951, max=1099973
+    season_nr: min=1, max=42
+    episode_nr: min=1, max=5000
+  Table: movie_companies
+    id: min=414, max=1274164
+    movie_id: min=907, max=2525663
+    company_id: min=2, max=70862
+    company_type_id: min=1, max=1
+  Table: role_type
+    id: min=2, max=2
+  Table: name
+    id: min=224, max=4167469
+  Table: cast_info
+    id: min=4452, max=20118010
+    person_id: min=937, max=2700440
+    movie_id: min=908, max=2524994
+    person_role_id: min=1, max=3137457
+    nr_order: min=1, max=118
+    role_id: min=1, max=2
+  Join Type: Hash Join
+  Join Keys: ['title.id=movie_companies.movie_id']
+  Join Type: Index Cond
+  Join Keys: ['company_name.id=movie_companies.company_id']
+  Join Type: Index Cond
+  Join Keys: ['cast_info.movie_id=title.id']
+  Join Type: Index Cond
+  Join Keys: ['role_type.id=cast_info.role_id']
+  Join Type: Index Cond
+  Join Keys: ['aka_name.person_id=cast_info.person_id']
+  Join Type: Index Cond
+  Join Keys: ['name.id=aka_name.person_id']
+
+Query 6:
+  Table: title
+    id: min=22, max=2528256
+    kind_id: min=1, max=7
+    production_year: min=2011, max=2011
+    episode_of_id: min=22, max=1632778
+    season_nr: min=1, max=2011
+    episode_nr: min=1, max=91334
+  Table: movie_companies
+    id: min=1274247, max=2609129
+    movie_id: min=2, max=2525745
+    company_id: min=1, max=234997
+    company_type_id: min=2, max=2
+  Table: movie_info
+    id: min=5486631, max=7020539
+    movie_id: min=1, max=2525975
+    info_type_id: min=3, max=3
+  Table: movie_info_idx
+    id: min=3, max=1379775
+    movie_id: min=2, max=2525793
+    info_type_id: min=101, max=101
+  Join Type: Nested Loop
+  Join Keys: ['title.id=movie_info.movie_id']
+  Join Type: Nested Loop
+  Join Keys: ['title.id=movie_companies.movie_id']
+  Join Type: Hash Join
+  Join Keys: ['movie_info_idx.movie_id=title.id']
+  Join Type: Index Cond
+  Join Keys: ['movie_companies.movie_id=movie_info_idx.movie_id']
+  Join Type: Index Cond
+  Join Keys: ['movie_info.movie_id=movie_companies.movie_id']
+
+Query 7:
+  Table: movie_companies
+    id: min=1274247, max=2609129
+    movie_id: min=2, max=2525745
+    company_id: min=1, max=234997
+    company_type_id: min=2, max=2
+  Table: movie_info
+    id: min=11658937, max=14695655
+    movie_id: min=1, max=2526430
+    info_type_id: min=16, max=16
+  Table: title
+    id: min=173467, max=2528297
+    kind_id: min=1, max=1
+    production_year: min=1880, max=2019
+  Table: movie_info_idx
+    id: min=3, max=1379775
+    movie_id: min=2, max=2525793
+    info_type_id: min=101, max=101
+  Join Type: Nested Loop
+  Join Keys: ['title.id=movie_info.movie_id']
+  Join Type: Hash Join
+  Join Keys: ['movie_companies.movie_id=title.id']
+  Join Type: Hash Join
+  Join Keys: ['movie_info_idx.movie_id=title.id']
+  Join Type: Index Cond
+  Join Keys: ['movie_info.movie_id=movie_companies.movie_id']
+
+Query 8:
+  Table: title
+    id: min=82, max=2528129
+    kind_id: min=1, max=7
+    production_year: min=2001, max=2002
+    episode_of_id: min=86, max=1632684
+    season_nr: min=1, max=48
+    episode_nr: min=1, max=14063
+  Table: movie_keyword
+    id: min=18673, max=4514532
+    movie_id: min=38802, max=2522638
+    keyword_id: min=7084, max=7084
+  Table: movie_info
+    id: min=11658937, max=14695655
+    movie_id: min=1, max=2526430
+    info_type_id: min=16, max=16
+  Table: cast_info
+    id: min=12670689, max=20122661
+    person_id: min=703, max=2701134
+    movie_id: min=3, max=2525846
+    person_role_id: min=1, max=3140339
+    nr_order: min=1, max=33613
+    role_id: min=2, max=2
+  Join Type: Nested Loop
+  Join Keys: ['title.id=cast_info.movie_id']
+  Join Type: Nested Loop
+  Join Keys: ['title.id=movie_info.movie_id']
+  Join Type: Index Cond
+  Join Keys: ['movie_companies.movie_id=movie_keyword.movie_id']
+  Join Type: Index Cond
+  Join Keys: ['title.id=movie_companies.movie_id']
+  Join Type: Index Cond
+  Join Keys: ['movie_info.movie_id=movie_companies.movie_id']
+  Join Type: Index Cond
+  Join Keys: ['cast_info.movie_id=movie_info.movie_id']
+
+Query 9:
+  Table: cast_info
+    id: min=22568094, max=31605208
+    person_id: min=2921630, max=3564314
+    movie_id: min=1, max=2525975
+    nr_order: min=0, max=972351421
+    role_id: min=3, max=9
+  Table: title
+    id: min=1, max=2528297
+    kind_id: min=1, max=6
+    production_year: min=1880, max=2011
+  Join Type: Hash Join
+  Join Keys: ['cast_info.movie_id=title.id']
+  Join Type: Hash Join
+  Join Keys: ['movie_companies.movie_id=title.id']
+
+Query 10:
+  Table: company_name
+    id: min=1, max=234997
+  Table: info_type
+    id: min=16, max=16
+  Table: title
+    id: min=1, max=2528298
+    kind_id: min=1, max=7
+    production_year: min=1991, max=2019
+    episode_of_id: min=2, max=1632831
+    season_nr: min=1, max=2013
+    episode_nr: min=1, max=91821
+  Table: movie_info
+    id: min=11659867, max=14691068
+    movie_id: min=399, max=2522473
+    info_type_id: min=16, max=16
+  Join Type: Nested Loop
+  Join Keys: ['movie_companies.company_type_id=company_type.id']
+  Join Type: Nested Loop
+  Join Keys: ['info_type.id=movie_info.info_type_id']
+  Join Type: Index Cond
+  Join Keys: ['aka_title.movie_id=movie_info.movie_id']
+  Join Type: Index Cond
+  Join Keys: ['title.id=aka_title.movie_id']
+  Join Type: Index Cond
+  Join Keys: ['movie_companies.movie_id=title.id']
+  Join Type: Index Cond
+  Join Keys: ['company_name.id=movie_companies.company_id']
+  Join Type: Index Cond
+  Join Keys: ['movie_keyword.movie_id=title.id']
+  Join Type: Index Cond
+  Join Keys: ['keyword.id=movie_keyword.keyword_id']
+
+Query 11:
+  Table: name
+    id: min=151, max=1738856
+  Table: cast_info
+    id: min=2709924, max=35061775
+    person_id: min=58, max=3791874
+    movie_id: min=3, max=2525970
+    person_role_id: min=1, max=881591
+    nr_order: min=1, max=20010705
+    role_id: min=1, max=10
+  Join Type: Hash Join
+  Join Keys: ['movie_info.info_type_id=info_type.id']
+  Join Type: Hash Join
+  Join Keys: ['movie_info_idx.info_type_id=info_type.id']
+  Join Type: Index Cond
+  Join Keys: ['movie_info.movie_id=movie_info_idx.movie_id']
+  Join Type: Index Cond
+  Join Keys: ['cast_info.movie_id=movie_info.movie_id']
+  Join Type: Index Cond
+  Join Keys: ['name.id=cast_info.person_id']
+  Join Type: Index Cond
+  Join Keys: ['title.id=movie_info.movie_id']
+
