@@ -1,8 +1,18 @@
 version: '2'
 
 services:
+  db:
+    build: ./docker/db
+    image: s1mplecc/postgres:15
+    hostname: db
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
+    ports:
+      - '5432:5432'
   spark:
-    build: ./spark
+    build: ./docker/spark
     image: s1mplecc/spark-hadoop:3
     hostname: master
     environment:
