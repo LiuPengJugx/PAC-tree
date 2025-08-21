@@ -17,12 +17,7 @@ class JoinEvaluator:
         self.metadata=metadata
         self.benchmark=benchmark
         self.dim_nums1,self.dim_nums2=len(join_queryset[0])//2,len(join_queryset[1])//2
-        self.worker_mermory=10 #每个block大小默认为2*block_size=20000 =>2*128*10=2560=>2.5G 即处理查询时，分配给每个worker 2.5G的内存，因为需要多个worker做map操作，最后放到reducer中进行join。
-        # 其实worker的内存分配，通常和parallelism有关。 根据parallelism的大小，经验性地设置worker的内存大小。
-        # 做实验验证从 500M到 30G的worker内存大小，对于join操作的性能影响。
-        
-        # 对于 100GB 的表数据，如果假设数据均匀分布在 10 个 workers 上，每个 worker 需要处理大约 10GB 的数据。考虑到 join 操作的内存开销和其他任务的内存需求，每个 worker 的内存通常会配置为数据大小的 2-3 倍，以确保有足够的内存进行计算和缓存。
-
+        self.worker_mermory=10 
 
 
     def generate_join_queries(self,a_training_set_for_join,b_training_set_for_join,join_amount=20):
@@ -31,13 +26,11 @@ class JoinEvaluator:
             if q1[dim] <= q2[dim] <= q1[dim + self.dim_nums1] or q2[dim] <= q1[dim] <= q2[dim + self.dim_nums2]:
                 return True
             return False
-        # a_training_set=self.a_training_set
-        # b_training_set=self.b_training_set
         a_training_set=a_training_set_for_join
         b_training_set=b_training_set_for_join
 
         # pick join query which will be measure
-        b_join_index = []  #b_join_index对应着每个
+        b_join_index = [] 
         for _ in range(join_amount):
             b_join_index.append(
                 list(set([random.randint(0, len(b_training_set) - 1) for _ in range(random.randint(1, 10))])))
@@ -55,8 +48,6 @@ class JoinEvaluator:
             b_join_queries.append(item)
         a_join_queries = {}
         
-        #为每条b查询，选择所有与之overlap的a查询。
-        # a_join_queries是一个字典，key是b查询的编号，value是与之overlap的a查询的集合
         for bid, item in enumerate(b_join_queries):
             for qb in item:
                 a_join_queries[bid] = []
@@ -70,12 +61,9 @@ class JoinEvaluator:
                                 flag = False
                                 break
                         if flag: a_join_queries[bid].append(qa)
-        # for key in a_join_queries.keys():
-        #     print(f"{key} : {len(a_join_queries[key])}")
         return a_join_queries,b_join_queries
 
 
-    # # 粗略估计join操作的成本
     # def rough_join_cost(self,group_type):
     #     hyper_read_cost, hyper_read_bytes, temp_joined_df, group_time= self.compute_total_shuffle_hyper_cost(group_type)
     #     # if shuffle:
@@ -88,11 +76,9 @@ class JoinEvaluator:
         if self.benchmark=='imdb':
             A_used_columns=[table_suffix[self.benchmark][self.join_tables[0]]+'_'+col for col in A_used_columns]
             B_used_columns=[table_suffix[self.benchmark][self.join_tables[1]]+'_'+col for col in B_used_columns]
-        # 将 NumPy 数组转换为 DataFrame，并指定列名
         df_A = pd.DataFrame(dataset_A, columns=A_used_columns)
         df_B = pd.DataFrame(dataset_B, columns=B_used_columns)
 
-        # 取出要用来 join 的原始列名
         left_col = A_used_columns[key_A]
         right_col = B_used_columns[key_B]
 
@@ -101,10 +87,7 @@ class JoinEvaluator:
             left_col,right_col=right_col,left_col
 
         df_B = df_B.drop_duplicates(subset=[right_col], keep='first')
-        # 指定 left_on 和 right_on 进行哈希合并
         merged_df = df_A.merge(df_B, how='inner', left_on=left_col, right_on=right_col)
-
-        # 返回合并后的 NumPy 数组
         return merged_df
 
     def compute_total_shuffle_hyper_cost(self,group_type,is_real_hyper):
@@ -125,7 +108,6 @@ class JoinEvaluator:
         static_A_blocks=blocks_A_ids[0].copy()
         static_B_blocks=blocks_B_ids[0].copy()
 
-        # compute hyper join cost （Use Group 4）
         def is_overlay(aid, bid):
             bucket_a = pa_A.nid_node_dict[aid].boundary
             bucket_b = pa_B.nid_node_dict[bid].boundary
@@ -194,7 +176,6 @@ class JoinEvaluator:
             for b_id in total_B_ids:
                 b_shuffle_cost += shuffle_weight * pa_B.nid_node_dict[b_id].node_size
 
-        # 获取连接结果
         dataset_A,dataset_B=[],[]
         for a_id in static_A_blocks:
             dataset_A.extend(pa_A.nid_node_dict[a_id].dataset)
@@ -380,8 +361,6 @@ class JoinEvaluator:
                 join_info["length"].append(node.boundary[join_attr + node.num_dims] - node.boundary[join_attr])
             a_join_info.append(join_info)
 
-        # print(sum([len(group_ids[key]) for key, group_ids in enumerate(blocks_a_ids)]))
-        # print(sum([len(group_ids[key]) for key, group_ids in enumerate(blocks_b_ids)]))
 
         join_infos = [a_join_info, b_join_info]
         for join_info in join_infos:
@@ -510,11 +489,6 @@ class JoinEvaluator:
         # pre-save these ids which doesn't have any overlap blocks
         last_index=0
         while last_index < len(pre_save_ids):
-            # if _get_group_size(pre_save_ids[last_index:cur_index+1]) > min_partition_size:
-            #     merge_ids = pre_save_ids[last_index:cur_index]
-            #     resizedSplits.append(merge_ids)
-            #     rest_count -= len(merge_ids)
-            #     last_index=cur_index
             if __get_group_size(pre_save_ids[last_index:cur_index + 1]) == min_partition_size:
                 merge_ids = pre_save_ids[last_index:cur_index + 1]
                 resizedSplits.append(merge_ids)
@@ -534,11 +508,6 @@ class JoinEvaluator:
             merge_ids = sel_tab['item'][0] + sel_tab['item'][1]
             merge_ids_length = len(merge_ids)
             is_completed = False
-            # if _get_group_size(merge_ids) >= min_partition_size or len(affinity_tab) == 0 or sel_tab['val'] == -1: #这个一般不出错，因为最初两个块很难超过尺寸限制，后续合并也进行了限制。
-            #     is_completed = True
-            #     resizedSplits.append(merge_ids)
-            #     rest_count -= merge_ids_length
-                
             if __get_group_size==min_partition_size or len(affinity_tab)==0 or sel_tab['val']==-1:
                 is_completed = True
                 resizedSplits.append(merge_ids)
@@ -558,9 +527,6 @@ class JoinEvaluator:
                     continue
                 # update tab
                 if list_solved_list(tab['item'][1], merge_ids):
-                    # if is_completed or _get_group_size(tab['item'][0]) + _get_group_size(merge_ids) > max_partition_size:
-                    #     tab['item'][1] = []
-                    #     tab['val'] = -1
                     if is_completed or __get_group_size(tab['item'][0]) + __get_group_size(merge_ids) > min_partition_size:
                         tab['item'][1] = []
                         tab['val'] = -1
@@ -574,7 +540,7 @@ class JoinEvaluator:
                 merge_ids = last_tab['item'][0] + last_tab['item'][1]
                 resizedSplits.append(merge_ids)
                 rest_count -= len(merge_ids)
-            # 更新merged column group的overlap_chunks和交叉收益
+            # Update overlap_chunks and intersection benefits for merged column groups
             for ud_item1 in affinity_tab:
                 if ud_item1['val'] == -1:
                     ud1_key = ud_item1['item'][0]
@@ -605,6 +571,4 @@ class JoinEvaluator:
                     ud_item1['val'] = max_intersection
                     ud_item1['item'][1] = max_target_ids
         return resizedSplits
-
-
 

@@ -9,7 +9,6 @@ import random
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--benchmark', type=str, default='tpch', help='The benchmark to use (tpch, imdb, or join-order)')
-# format queries命令 action_store_true
 parser.add_argument('--format', action='store_true', help='Whether to format queries')
 parser.add_argument('--export_mto_paw_queries', action='store_true', help='Whether to export paw and mto queries')
 parser.add_argument('--export_pac_queries', action='store_true', help='Whether to export mto queries')
@@ -44,7 +43,7 @@ def formatting_query_seed():
         pattern = r'(?:^|\n)(?:select|create view).*?;(?:\n|$)'
         queries = re.findall(pattern, content, re.DOTALL | re.IGNORECASE)
     elif os.path.exists(f'{query_base_dir}/seed1'):
-        # 遍历该目录下的所有sql文件，存入到queries变量中
+        # Traverse all SQL files in the directory and store them in the queries variable
         for file in os.listdir(f'{query_base_dir}/seed1'):
             if file.endswith('.sql'):
                 with open(f'{query_base_dir}/seed1/{file}', 'r') as f:
@@ -99,8 +98,8 @@ def formatting_query_seed():
             pred=pred.strip().replace('(','').replace(')','').replace(' ','')
             if len(pred.split('='))!=2:
                 return False
-            col1,col2=pred.split('=')  # 判断col1和col2是否都是列名， 不带.
-            # 依据schema_details 判断col1和col2是否都是列名
+            col1,col2=pred.split('=')  # Check if col1 and col2 are column names without '.'
+            # Check if col1 and col2 are column names based on schema_details
             if_col1,if_col2=False,False
             for table in schema_details:
                 for col in schema_details[table]['numeric_columns']+schema_details[table]['text_columns']:
@@ -145,26 +144,22 @@ def formatting_query_seed():
 
         def parse_join_condition(cond):
             """
-            从 '(part.p_partkey = partsupp.ps_partkey)' 等形式中提取具体列，忽略 (SubPlan x)=xxx 的内容
-            最终返回 ['p_partkey', 'ps_partkey'] 这样的列表
+            Extract specific columns from conditions like '(part.p_partkey = partsupp.ps_partkey)', 
+            ignoring content like (SubPlan x)=xxx.
+            Returns a list like ['p_partkey', 'ps_partkey']
             """
             import re
             join_keys = []
             if not cond:
                 return join_keys
             
-            # 去除 '(SubPlan x) = ...' 这类部分
+            # Remove '(SubPlan x) = ...' parts
             cond = re.sub(r'\(SubPlan\s+\d+\)\s*=\s*\S+', '', cond)
 
-            # 去掉外层括号、多余空白
+            # Remove outer parentheses and extra whitespace
             text = cond.strip('() ')
 
-            # 查找形如 'table.col = alias.col' 或 'col = table.col' 的片段
-            # pattern = r'(\w+(?:\.\w+)?)\s*=\s*(\w+(?:\.\w+)?)'
-            # pairs = re.findall(pattern, text)
-            
-            # for left_col, right_col in pairs:
-            #     # 去掉表或别名前缀，只保留最终列名
+            # Find patterns like 'table.col = alias.col' or 'col = table.col'
             pattern = r'((?:\w+\.)?\w+)\s*=\s*((?:\w+\.)?\w+)'
             matches = re.findall(pattern, text)
     
@@ -177,40 +172,40 @@ def formatting_query_seed():
                 right_table = right_parts[0]
                 right_col = right_parts[-1]
                 
-                # 验证列名是否有效
+                # Validate column names
                 left_valid = is_valid_column(left_col, left_table, schema_details)
                 right_valid = is_valid_column(right_col, right_table, schema_details)
                 
                 if not (left_valid and right_valid):
-                    continue  # 跳过无效的列
+                    continue  # Skip invalid columns
                 
-                # 处理两边都有表名的情况
+                # Handle case where both sides have table names
                 if left_table and right_table:
-                    # 处理别名映射
+                    # Handle alias mappings
                     if left_table in aliases_map:
                         left_table = aliases_map[left_table]
                     if right_table in aliases_map:
                         right_table = aliases_map[right_table]
                     join_keys.append(f"{left_table}.{left_col}={right_table}.{right_col}")
                 
-                # 处理左边没有表名的情况
+                # Handle case where left side has no table name
                 elif not left_table and right_table:
-                    # 处理别名映射
+                    # Handle alias mappings
                     if right_table in aliases_map:
                         right_table = aliases_map[right_table]
                     
-                    # 查找左列所属的表
+                    # Find table for left column
                     left_table = find_table_for_column(left_col, tables_set, schema_details)
                     if left_table:
                         join_keys.append(f"{left_table}.{left_col}={right_table}.{right_col}")
                 
-                # 处理右边没有表名的情况
+                # Handle case where right side has no table name
                 elif left_table and not right_table:
-                    # 处理别名映射
+                    # Handle alias mappings
                     if left_table in aliases_map:
                         left_table = aliases_map[left_table]
                     
-                    # 查找右列所属的表
+                    # Find table for right column
                     right_table = find_table_for_column(right_col, tables_set, schema_details)
                     if right_table:
                         join_keys.append(f"{left_table}.{left_col}={right_table}.{right_col}")
@@ -220,32 +215,32 @@ def formatting_query_seed():
         
         def is_valid_column(col_name, table_name=None, schema_details=None):
             """
-            验证列名是否存在于模式中
+            Validate if the column name exists in the schema
             """
             if not schema_details:
-                return True  # 如果没有模式信息，默认为有效
+                return True  # If no schema information is provided, default to valid
                 
-            # 如果提供了表名，只检查该表
+            # If table name is provided, only check that table
             if table_name:
                 if table_name in schema_details:
                     numeric_cols = schema_details[table_name].get('numeric_columns', [])
                     text_cols = schema_details[table_name].get('text_columns', [])
                     return col_name in numeric_cols or col_name in text_cols
-                return False  # 表不存在于模式中
+                return False  # Table does not exist in schema
                 
-            # 如果没有提供表名，检查所有表
+            # If no table name is provided, check all tables
             for table in schema_details:
                 numeric_cols = schema_details[table].get('numeric_columns', [])
                 text_cols = schema_details[table].get('text_columns', [])
                 if col_name in numeric_cols or col_name in text_cols:
                     return True
                     
-            return False  # 列名不存在于任何表中
+            return False  # Column name does not exist in any table
         
 
         def find_table_for_column(column, tables_set, schema_details):
             """
-            根据列名查找所属的表
+            Find the table that owns the given column
             """
             candidate_tables = []
             for table in tables_set:
@@ -256,12 +251,12 @@ def formatting_query_seed():
                     if column in numeric_cols or column in text_cols:
                         candidate_tables.append(table)
             
-            # 如果只找到一个表，返回它
+            # If only one table is found, return it
             if len(candidate_tables) == 1:
                 return candidate_tables[0]
             
-            # 如果找到多个表，可以基于上下文或查询执行计划选择最可能的一个
-            # 这里简单地返回第一个，实际应用中可能需要更复杂的逻辑
+            # If multiple tables are found, select the most likely one based on context
+            # Here we simply return the first one, but in practice more sophisticated logic might be needed
             elif len(candidate_tables) > 1:
                 return candidate_tables[0]
             
@@ -269,7 +264,7 @@ def formatting_query_seed():
 
         def extract_joins_from_plan(plan_node, join_info, visited_tables,table_predicates):
             """
-            递归提取Join相关信息，记录实际使用到的表、join_keys数组
+            Recursively extract Join information, recording actually used tables and join_keys array
             """
             node_type = plan_node.get('Node Type', '')
             if 'Join' in node_type:
@@ -296,15 +291,12 @@ def formatting_query_seed():
                         table_predicates[plan_node['Relation Name']].append(index_cond)
                     else:
                         join_keys = parse_join_condition(index_cond)
-                        # join_key_list=join_keys[0].split('.')
-                        # join_key_list[0]=plan_node['Relation Name']
-                        # new_join_keys=['.'.join(join_key_list)]
                         if join_keys:
                             join_info.append({
                                 'join_type': 'Index Cond',
                                 'join_keys': join_keys
                             })
-            # 继续深入子节点
+            # Continue to child nodes
             if 'Plans' in plan_node:
                 for child in plan_node['Plans']:
                     extract_joins_from_plan(child, join_info, visited_tables,table_predicates)
@@ -341,7 +333,6 @@ def formatting_query_seed():
             min_max_selects = [f"MIN({col}) as min_{col}, MAX({col}) as max_{col}" for col in numeric_cols]
             
             min_max_query=f"SELECT {', '.join(min_max_selects)} FROM {table} WHERE {where_clause};"
-            # min_max_query=f"SELECT {','.join(numeric_cols)} FROM {table} WHERE {where_clause} order by {numeric_cols[0]};"
             
             print(f"Executing min/max query on table '{table}':\n{min_max_query}\n")
 
@@ -370,10 +361,10 @@ def formatting_query_seed():
             'ranges': ranges,
             'join_info': join_info
         }
-    # 保存query_column_ranges结果到.pkl文件
+    # Save query_column_ranges results to .pkl file
     with open(f'{query_base_dir}/formatted_queries.pkl', 'wb') as f:
         pickle.dump(query_column_ranges, f)
-    # 同时，写一个副本，保存到txt文件中
+    # Also write a copy to txt file
     with open(f'{query_base_dir}/formatted_queries.txt', 'w') as f:
         for query_name, tables in query_column_ranges.items():
             f.write(f"{query_name}:\n")
@@ -398,13 +389,12 @@ def validate_queries(method):
         # if query_name!='Query 20':
         #     continue
         
-        # 第一步，join-induced filters处理
+        # Step 1: Process join-induced filters
         cnt=0
         while cnt<3: 
             for join_item in query_item['join_info']:
                 # new_join_keys=[]
-                # 需要循环2次，避免某些表未添加
-                # for i in range(len(join_item['join_keys'])):
+                # Need to loop twice to avoid missing some tables
                 left_table, left_col, right_table, right_col=join_item['join_keys'][0].replace('=','.').split('.')
 
                 # check if left_table and right_table are in the same join
@@ -478,18 +468,6 @@ def validate_queries(method):
     with open(f'{query_base_dir}/{method}_queries.pkl', 'wb') as f:
         pickle.dump(saved_queries, f)
 
-    # with open(f'{query_base_dir}/{method}_queries.txt', 'w') as f:
-    #     for query_name, query_item in saved_queries.items():
-    #         f.write(f"{query_name}:\n")
-    #         for table, cols in query_item['ranges'].items():
-    #             f.write(f"  Table: {table}\n")
-    #             for col, rng in cols.items():
-    #                 f.write(f"    {col}: min={rng['min']}, max={rng['max']}\n")
-    #         for join in query_item['join_info']:
-    #             f.write(f"  Join Type: {join['join_type']}\n")
-    #             f.write(f"  Join Keys: {join['join_keys']}\n")
-    #         f.write("\n")
-        
 def paw_queries():
     formatted_queries=pickle.load(open(f'{query_base_dir}/formatted_queries.pkl', 'rb'))
     verified_queries=pickle.load(open(f'{query_base_dir}/mto_queries.pkl', 'rb'))
@@ -511,8 +489,9 @@ if args.format:
     formatting_query_seed()
 
 if args.export_mto_paw_queries:
-    # # 该函数不仅仅是验证，而是对查询进行了一些处理，比如join-induced filters处理（这对后续的join order算法至关重要。传统join-indcued的谓词，才能准确地估计各表潜在的join成本，
-    # # 并且构建更好的join tree。
+    # This function not only validates but also processes queries, such as handling join-induced filters
+    # (which is crucial for subsequent join order algorithms. Traditional join-induced predicates help accurately
+    # estimate potential join costs for each table and build better join trees)
     validate_queries(method="mto")
     paw_queries()
 

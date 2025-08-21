@@ -1,5 +1,3 @@
-# 连接本地的docker容器中的spark集群，进行测试
-
 import os
 import sys
 from pyspark.sql import SparkSession

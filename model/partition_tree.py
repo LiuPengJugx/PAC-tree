@@ -1,4 +1,4 @@
-import time
+import math
 
 import pickle
 from model.partition_node import PartitionNode
@@ -8,7 +8,7 @@ import copy
 import matplotlib.pyplot as plt
 from matplotlib.patches import Rectangle
 from mpl_toolkits.mplot3d import Axes3D
-
+from model.join_eval import JoinEvaluator
 
 class PartitionTree:
     """
@@ -96,7 +96,7 @@ class PartitionTree:
 
         self.node_count = len(self.nid_node_dict.keys())
 
-    # 仅仅访问分区树top layer的节点，确定查询的大范围（即join key的范围）
+    # Only access nodes in the top layer of the partition tree to determine the broad query range (i.e. join key range)
     def query_single_toplayer(self, query):
         partition_ids = self.__find_overlapped_partition_consider_depth(
             self.pt_root, query, 1
@@ -139,8 +139,28 @@ class PartitionTree:
             costs.append(cost)
         return costs
 
+    def estimate_join_cost(self, table_name, join_queries, join_cols, worker_num):
+        cost=0
+        for join_query in join_queries:
+            exist_join_operator=False
+            if join_query["join_relations"]:
+                for join_op in join_query["join_relations"]:
+                    for join_table, join_col in join_op.items():
+                        if join_table==table_name:
+                            if join_col in join_cols:
+                                exist_join_operator=True
+            if exist_join_operator:
+                for query in join_query["vectors"][tablename]:
+                    overlapped_leaf_ids = self.query_single(query)
+                    for nid in overlapped_leaf_ids:
+                        cur_node = self.nid_node_dict[nid]
+                        cost+=cur_node.node_size
+            else:
+                return float('inf')
+        return math.ceil(2*cost/worker_num)*worker_num
+
+
     def evaluate_query_cost(self, queries, print_result=False):
-        # if len(queries)==0: return 0
         """
         get the logical IOs of the queris
         return the average query cost
@@ -153,10 +173,8 @@ class PartitionTree:
 
         tablesize = self.pt_root.node_size
         column_width = self.column_width
-        accessed_cols = self.used_columns
 
         row_width = sum([column_width[col] for col in column_width])
-        access_width = sum([column_width[col] for col in accessed_cols])
 
         for count, query in enumerate(queries):
             cost = 0
@@ -171,11 +189,9 @@ class PartitionTree:
                 actual_data_size.append(cur_node.node_size)
 
             print(
-                f"query #{count}:  Row Count: {sum(actual_data_size)}, Access Ratio:{sum(actual_data_size)*access_width/(tablesize*row_width)}"
+                f"query #{count}:  Row Count: {sum(actual_data_size)}, Access Ratio:{sum(actual_data_size)*row_width/(tablesize*row_width)}"
             )
-            total_ratio += (
-                sum(actual_data_size) * access_width / (tablesize * row_width)
-            )
+            total_ratio += sum(actual_data_size) * row_width / (tablesize * row_width)
             total_cost += cost
             case_cost[case] = cost
             case += 1
@@ -291,8 +307,12 @@ class PartitionTree:
                 child_node.node_size = MBR.bound_size
                 child_node.partitionable = False
                 remaining_size -= child_node.node_size
-                child_node.dataset = self.__extract_sub_dataset(parent_node.dataset, child_node.boundary)
-                child_node.queryset = MBR.queries # no other queries could overlap this MBR, or it's invalid
+                child_node.dataset = self.__extract_sub_dataset(
+                    parent_node.dataset, child_node.boundary
+                )
+                child_node.queryset = (
+                    MBR.queries
+                )  # no other queries could overlap this MBR, or it's invalid
                 child_node.query_MBRs = [MBR]
                 if not pretend:
                     self.add_node(parent_nid, child_node)

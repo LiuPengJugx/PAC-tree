@@ -1,13 +1,9 @@
-# 分别测试enable和disable bounding split的分区树效果
-
 from partition_algorithm import PartitionAlgorithm
 import logging
-
 from colorlog import ColoredFormatter
 
 handler = logging.StreamHandler()
 handler.setLevel(logging.DEBUG)
-
 formatter = ColoredFormatter(
     "%(log_color)s%(levelname)-8s:%(name)s:%(message)s",
     log_colors={
@@ -21,13 +17,13 @@ formatter = ColoredFormatter(
 handler.setFormatter(formatter)
 logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)
-logger.handlers = []  # 清除默认处理器
+logger.handlers = []
 logger.addHandler(handler)
 
 
 def test_bounding_split_effect():
     """
-    分别测试启用和禁用bounding split时分区树的效果
+    Test the effect of bounding split when enabled and disabled
     """
     benchmark = "tpch"
     benchmark_dict = {
@@ -69,12 +65,6 @@ def test_bounding_split_effect():
         pa.load_query(join_indeuced="PAW")
 
         for if_bounding_split in [True, False]:
-            # if if_bounding_split:
-            #     pa.InitializeWithNORA()
-            # else:
-            #     pa.InitializeWithJT(
-            #         enable_bounding_split=False, enable_median_extend=False
-            #     )
             pa.InitializeWithJT(
                     enable_bounding_split=if_bounding_split, enable_median_extend=False
                 )
@@ -82,7 +72,6 @@ def test_bounding_split_effect():
 
             cost_dict.setdefault(bounding_flag, {})
             trees.setdefault(bounding_flag, {})
-            # pa.InitializeWithQDT()
             trees[bounding_flag][tablename] = pa.partition_tree
             trees[bounding_flag][tablename].name = "PAC-Tree"
             tree_depth = pa.evaluate_tree_depth(pa.partition_tree.pt_root, 0)
@@ -92,21 +81,13 @@ def test_bounding_split_effect():
                 f"enable bounding: {if_bounding_split}, {cost_dict[bounding_flag][tablename]}, max_depth:{tree_depth}"
             )
 
-    # 统计平均值
     for bounding_flag in cost_dict.keys():
-        #平均所有表的平均值
         avg_cost = sum(cost_dict[bounding_flag].values()) / len(cost_dict[bounding_flag])
-        
         logger.info(
             f"Average cost for bounding split {'enabled' if bounding_flag == 1 else 'disabled'}: {avg_cost}"
         )
-        
-
-
 if __name__ == "__main__":
     test_bounding_split_effect()
-
-
 
 """
 bounding split test result:

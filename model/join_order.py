@@ -42,10 +42,10 @@ class TraditionalJoinOrder:
                 #         break
                 for pid,item in enumerate(paths):
                     if (item[0]==node1 or item[1]==node1):
-                        if item[0]==node1:   #不一定为hyper，但旧节点位于连接前位置
+                        if item[0]==node1:   #Not necessarily hyper, but old node is at the front position of join
                             flag=False
                             break
-                        if item[2]==1:  #前面出现了hyper连接，则新节点一定是shuffle
+                        if item[2]==1:  #If hyper join appeared before, new node must be shuffle
                             flag=False
                             break
                 if paths[-1][0]!=node1 and paths[-1][1]!=node1:
@@ -53,7 +53,6 @@ class TraditionalJoinOrder:
                 
             if right_table not in [node.table for node in used_nodes]:
                 node2=Node(right_table)
-                # node2.adj_col[node1]=right_col
                 used_nodes.append(node2)
             else:
                 node2=[node for node in used_nodes if node.table==right_table][0]
@@ -125,7 +124,6 @@ class JoinGraph:
     
     def generate_MST(self):
         
-        # 初始边，是不是可以加一个附有谓词的节点相关边，作为起始路线。
         start_edges=[]
         max_edge,max_hyper_weight=(),-1
         for node in self.GraphJ:
@@ -158,7 +156,7 @@ class JoinGraph:
                             if cur_flag==1:
                                 cur_weight=wrap['csy_w']
                             else:
-                                if paths[-1][1]==cur_node: #确保本次hyper join的前端节点为last join的末端节点
+                                if paths[-1][1]==cur_node: #Ensure the front node of this hyper join is the end node of the last join
                                     cur_weight=wrap['chy_w']
                                 else:
                                     cur_weight=wrap['csy_w']
@@ -179,7 +177,6 @@ class JoinGraph:
             if total_weight<min_MST_weight: 
                 min_MST_weight=total_weight
                 min_MST=paths
-            # print(self.print_mst(paths),total_weight)
 
         print("The minimum spanning tree is:")
         self.print_mst(min_MST)

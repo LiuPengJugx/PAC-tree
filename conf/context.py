@@ -1,4 +1,4 @@
-class JoinSelectorSettings:
+class Context:
     def __init__(self):
         self.benchmark='tpch'
         self.scale_factor = 1
