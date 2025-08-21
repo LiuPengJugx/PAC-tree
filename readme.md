@@ -45,12 +45,12 @@ This repository contains the implementation and experimental framework for **PAC
 1. **Environment Setup**
    ```bash
    pip install -r requirements.txt
-   docker-compose up -d  # use docker to start PostgreSQL and Spark services
+   docker-compose up -d  # use docker to start PostgreSQL and Spark services (It is recommended to manually install a Spark cluster on multiple real machines.)
    ```
 
 2. **Import necessary Dataset**
    ```txt
-   please read db/get_started/db_preparation.md
+   please follow the instructions of db/get_started/db_preparation.md
    ```
 
 3. **Data Generation and Query Preparation**
