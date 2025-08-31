@@ -81,7 +81,7 @@ This repository contains the implementation and experimental framework for **PAC
 
    Output example:
    
-   [Standard Result Example](./example/run_example2.json)
+   [Standard Result Example](./examples/run_example2.json)
 
 
 ## License
