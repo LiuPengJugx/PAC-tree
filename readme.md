@@ -9,6 +9,7 @@ This repository contains the implementation and experimental framework for **PAC
 
 ```
 ├── conf/                      # Context args
+├── docker/                    # Docker compose files
 ├── model/                    # Core partitioning algorithms
 │   ├── partition_algorithm.py    # Main PAC-Tree implementations
 │   ├── partition_tree.py         # Tree data structure primitives
@@ -28,8 +29,9 @@ This repository contains the implementation and experimental framework for **PAC
 │   ├── tpcds/                    # TPC-DS dataset
 │   └── imdb/                     # IMDB dataset
 ├── spark/                    # Apache Spark integration
-    ├── data_writer.py            # Distributed data loading
-    └── spark_query.py            # Spark SQL query execution
+│   ├── data_writer.py            # Distributed data routing
+│   └── test_spark.py            # Test Spark SQL query execution
+├── examples/                  # Example images and results
 ```
 
 ## Usage Instructions
