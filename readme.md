@@ -77,7 +77,7 @@ This repository contains the implementation and experimental framework for **PAC
 
    Run example:
 
-   ![Running Example](./example/run_example1.jpg)
+   ![Running Example](./examples/run_example1.jpg)
 
    Output example:
    
