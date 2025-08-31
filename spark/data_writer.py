@@ -36,9 +36,9 @@ def init_spark():
                           ("spark.driver.maxResultSize", "16g")])
     sc = SparkContext(conf=conf)
     sqlContext = SQLContext(sc)
-    os.environ['HADOOP_HOME'] = '/home/liupengju/hadoop-3.3.1'
-    os.environ['JAVA_HOME'] = '/home/liupengju/jdk1.8.0_181'
-    os.environ['ARROW_LIBHDFS_DIR'] = '/home/liupengju/hadoop-3.3.1/lib/native'
+    os.environ['HADOOP_HOME'] = '~/hadoop-3.3.1'
+    os.environ['JAVA_HOME'] = '~/jdk1.8.0_181'
+    os.environ['ARROW_LIBHDFS_DIR'] = '~/hadoop-3.3.1/lib/native'
     return sc,sqlContext
 
 def process_chunk_row(row, partition_tree, pid_data_dict, count, k):
@@ -139,18 +139,13 @@ def data_routing(method):
             partition_tree=qdTreer[table]
             hdfs_path=f"{hdfs_base_path}/{benchmark}/paw/{table}/"
             batch_data_parallel(benchmark, table, partition_tree, chunk_size, hdfs_path, num_process, hdfs_private_ip)
-            time0=time.time()
-            
             end_time=time.time()
-            
             paw_opt_time+=end_time-start_time
         
         opt_time_dict['PAW']=paw_opt_time
             
     else:
         adpGraph=pickle.load(open(f'{base_dir}/../layouts/{benchmark}/adp-hgraph.pkl','rb'))
-        jtGraph=pickle.load(open(f'{base_dir}/../layouts/{benchmark}/jt-hgraph.pkl','rb'))
-
         joinTreer=pickle.load(open(f'{base_dir}/../layouts/{benchmark}/join-trees.pkl','rb'))
 
         adp_opt_time,jt_opt_time=0,0
@@ -164,7 +159,6 @@ def data_routing(method):
 
                 if column in adpGraph.hyper_nodes[table]:
                     adp_opt_time+=end_time-start_time
-
                 if column in jtGraph.hyper_nodes[table]:
                     jt_opt_time+=end_time-start_time
         opt_time_dict['AD-MTO']=adp_opt_time

@@ -1227,25 +1227,25 @@ def run_evaluation(save_result=False, disabled_prim_reorder=False):
 def scaling_block_size():
     for item in [1000, 5000, 20000, 50000]:
         settings.block_size=item
-        run_evaluation(save_result=True, disabled_prim_reorder=True)
+        run_evaluation(save_result=False, disabled_prim_reorder=True)
 
 
 def scaling_replication():
     for item in [1,2,3,4]:
         settings.replication_factor=item
-        run_evaluation(save_result=True, disabled_prim_reorder=False)
+        run_evaluation(save_result=False, disabled_prim_reorder=False)
         
 
 def test_model_overhead_by_scaling_scale():
     for sf in [5,10,20,50]:
         settings.scale_factor=sf
         # settings.block_size=int(10000/sf)
-        run_evaluation(save_result=True, disabled_prim_reorder=False)
+        run_evaluation(save_result=False, disabled_prim_reorder=False)
 
 
 if args.command == 0:  #basic experiments
     settings.replication_factor=3 #defult
-    run_evaluation(save_result=True, disabled_prim_reorder=False)
+    run_evaluation(save_result=False, disabled_prim_reorder=False)
 elif args.command == 1: # sensitivity analysis
     scaling_block_size()
 elif args.command == 2: 
