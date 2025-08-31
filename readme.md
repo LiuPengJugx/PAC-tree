@@ -77,7 +77,7 @@ This repository contains the implementation and experimental framework for **PAC
 
    Run example:
 
-   ![Running Example](./examples/run_example1.jpg)
+   <img src="./examples/run_example1.jpg" alt="Running Example" width="80%"/>
 
    Output example:
    
